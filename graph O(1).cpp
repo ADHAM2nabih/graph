@@ -117,8 +117,8 @@ int shortest_path(int start,int target,vector<int>graph[])
 
     while (!q.empty())
     {
-        int node = q.front().first ,
-            dist = q.front().second ,
+        int node = q.front().first,
+            dist = q.front().second,
             n = graph[node].size();
 
         q.pop();
@@ -231,7 +231,7 @@ bool isCyclic_undirected(int V,vector<int> adj[])
 /////////////////////////////////////////////////// dijkistra
 
 
-void dijkstra(int start, vector<pair<int, int>> adj[], int V)
+void dijkstra(int start, vector<pair<int, int>> adj[], int V)   ////shortest path
 {
     priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
     vector<int> dist(V+1, INT_MAX);
@@ -267,17 +267,21 @@ void dijkstra(int start, vector<pair<int, int>> adj[], int V)
 int did = 1e6+5;
 vector<long>dist(did),to(did),from(did),we(did);
 
-bool bellmanford(int source)
+bool bellmanford(int source)                ////shortest path
 {
     bool x=0;
-    for(int i=1; i<n; i++) dist[i]=LONG_MAX;
+    for(int i=1; i<n; i++)
+    {
+        dist[i]=LONG_MAX;
+    }
+
     dist[source]=0;
     for(int i=0; i<n; i++)  ///////n-1 for bellman ford       n for detection of negative cycles
     {
         int flag=0;
         for(int j=0; j<m; j++)
         {
-            ll u = from[j], v = to[j], w = we[j];
+            ll u = from[j], v = to[j], w = we[j];   // initialized in the main function
             if(dist[u]+w<dist[v])
             {
                 dist[v] = dist[u]+w;
@@ -387,6 +391,7 @@ int main()
     if(t==1)
     {
         init(n);
+
         vector<pair<int, int>> graph[n+1];
         pair<ll,pair<ll,ll>> p[m];
 
@@ -394,10 +399,14 @@ int main()
         {
             int u, v, weight;
             cin >> u >> v >> weight;
+
             graph[u].push_back({v, weight});
+            graph[v].push_back({u, weight});
+
             x[u][v]=weight;
             x[v][u]=weight; // detecting negative cycles in floyd warshall
-            graph[v].push_back({u, weight});
+
+
             p[i] = {weight,{u,v}};
 
             from[i] = u; //bellman ford
@@ -457,6 +466,7 @@ int main()
         */
     }
 
+           ///////////////////////////// greedy methods
     else
     {
         vector<int>graph[n+1];
