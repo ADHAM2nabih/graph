@@ -45,11 +45,27 @@ void print(vector<vector<ll>>graph,int v)
     }
 }
 
+void print(vector<vector<int>>graph,int v)
+{
+    for (int i = 1; i <= v ; i++)
+    {
+        cout<<i<< " : ";
+        for (int j = 1; j <= v; j++)
+        {
+            cout << graph[i][j] << "    ";
+        }
+        cout << endl;
+    }
+}
+
 int degree(vector<int>graph[],int node)
 {
     return graph[node].size();
 }
 
+
+// **Depth First Search (DFS)**
+// - It explores as far as possible along a branch before backtracking.
 void dfs(int node,vector<int>graph[],vector<int>&visited)
 {
     cout<<node<<" ";
@@ -65,6 +81,9 @@ void dfs(int node,vector<int>graph[],vector<int>&visited)
     }
 }
 
+
+// **Breadth First Search (BFS)**
+// - It explores all neighbors of a node before moving to the next level
 void bfs(int node, vector<int>graph[], vector<int>& visited, queue<int>& que)
 {
 
@@ -87,6 +106,7 @@ void bfs(int node, vector<int>graph[], vector<int>& visited, queue<int>& que)
     }
 }
 
+// **Function to count the number of connected components in a graph**
 int count_graphs(vector<int>graph[],int v, vector<int>& visited)
 {
     int cnt = 0;
@@ -103,6 +123,9 @@ int count_graphs(vector<int>graph[],int v, vector<int>& visited)
     return cnt;
 }
 
+
+// **Function to find the shortest path using BFS**
+// - Used for unweighted graphs.
 int shortest_path(int start,int target,vector<int>graph[])
 {
     if (start == target)
@@ -141,6 +164,7 @@ int shortest_path(int start,int target,vector<int>graph[])
 }
 
 /////////////////////////////////////////directed
+
 
 bool isCyclic_util_directed(vector<int> adj[], vector<bool> visited, int curr)
 {
@@ -230,6 +254,18 @@ bool isCyclic_undirected(int V,vector<int> adj[])
 
 /////////////////////////////////////////////////// dijkistra
 
+/*
+Dijkstra’s algorithm is used to find the shortest path from a single source node to all other nodes in a graph with non-negative weights. It works efficiently using a priority queue (min-heap).
+
+Steps of Dijkstra’s Algorithm:
+Initialize distances: Set the distance of the source node to 0 and all other nodes to ∞.
+
+Use a priority queue (min-heap) to always expand the node with the smallest known distance.
+
+Relax edges: For each neighbor of the current node, update its distance if the found path is shorter.
+
+Repeat until all nodes are processed or the queue is empty.
+*/
 
 void dijkstra(int start, vector<pair<int, int>> adj[], int V)   ////shortest path
 {
@@ -264,8 +300,13 @@ void dijkstra(int start, vector<pair<int, int>> adj[], int V)   ////shortest pat
     }
 }
 ////////////////////////////////////////////////bellman ford
+// **Bellman-Ford Algorithm**
+// - Finds the shortest path, even if the graph has negative weights.
+// - Runs for (n-1) iterations and detects negative cycles if any.
+
 int did = 1e6+5;
 vector<long>dist(did),to(did),from(did),we(did);
+
 
 bool bellmanford(int source)                ////shortest path
 {
@@ -295,6 +336,8 @@ bool bellmanford(int source)                ////shortest path
 
 ///////////////////////////////////////////////////
 
+// **Floyd-Warshall Algorithm**
+// - Finds shortest paths between all pairs of vertices.
 pair<vector<vector<ll>>,bool> Floyd_Warshall(vector<vector<ll>>v,int n)
 {
     bool flag =0;
@@ -320,6 +363,9 @@ pair<vector<vector<ll>>,bool> Floyd_Warshall(vector<vector<ll>>v,int n)
 }
 
 ////////////////////////////////////////////////////
+
+// **Disjoint Set Union (DSU) / Union-Find**
+// - Used for Kruskal’s Algorithm (Minimum Spanning Tree).
 
 const int N=2e5+5;
 int par[N],sz[N];
@@ -358,6 +404,8 @@ void connect(int u,int v)
     }
 }
 
+// **Kruskal’s Algorithm**
+// - Finds the Minimum Spanning Tree (MST).
 ll kruskal(pair<ll,pair<ll,ll>>p[])
 {
 
@@ -376,6 +424,45 @@ ll kruskal(pair<ll,pair<ll,ll>>p[])
     return mincost;
 }
 
+//Kirchhoff’s theorem (also known as the Matrix-Tree Theorem)
+//is used in graph theory to count the number of spanning trees
+//Kirchhoff’s Theorem counts the number of distinct spanning trees in an undirected graph.
+vector<vector<int>> Kirchhoff(vector<vector<int>>matrix)
+{
+    vector<int>deg(n+1,0);  //calculating degree for each node
+    for(int i=1;i<n+1;i++)
+    {
+        for(int j=1;j<n+1;j++)
+        {
+            if(matrix[i][j]!=0)
+            {
+                deg[i]++;
+            }
+        }
+    }
+
+    vector<vector<int>>product(n+1, vector<int>(n+1,0));
+
+    for(int i=1;i<n+1;i++)
+    {
+        for(int j=1;j<n+1;j++)
+        {
+            if(i!=j)
+            {
+                product[i][j] = matrix[i][j] * -1 ;
+            }
+            else
+            {
+                product[i][j] = deg[i] ;
+            }
+        }
+    }
+
+    return product;
+
+}
+
+
 ///////////////////////////////////////////////////
 
 int main()
@@ -383,6 +470,9 @@ int main()
     cin>>n>>m;
 
     vector<vector<ll>> x(n+1, vector<ll>(n+1,INT_MAX));
+
+    vector<vector<int>>matrix(n+1, vector<int>(n+1,0));
+
     queue<int>que;
 
     int t;
@@ -393,15 +483,18 @@ int main()
         init(n);
 
         vector<pair<int, int>> graph[n+1];
-        pair<ll,pair<ll,ll>> p[m];
+        pair<ll,pair<ll,ll>> p[m]; // for kruskal
 
         for (int i = 0; i < m; i++)
         {
             int u, v, weight;
             cin >> u >> v >> weight;
 
+            matrix[u][v]=1;
+            matrix[v][u]=1;
+
             graph[u].push_back({v, weight});
-            graph[v].push_back({u, weight});
+            //graph[v].push_back({u, weight});
 
             x[u][v]=weight;
             x[v][u]=weight; // detecting negative cycles in floyd warshall
@@ -446,6 +539,10 @@ int main()
 
         sort(p,p+m);
         cout<<"minimum spanning tree is : "<<kruskal(p)<<endl;
+
+        vector<vector<int>>pro =  Kirchhoff(matrix);
+        print(pro,n);
+
         /*
 
         1 2 4
@@ -518,4 +615,149 @@ int main()
 
 }
 
+/*
+
+Graph theory is a field of mathematics and computer science that studies graphs, which are structures consisting of nodes (vertices) connected by edges (links). Graph algorithms are used in various applications like networking, data structures, AI, and optimization problems.
+
+List of Graph Algorithms
+
+1. Graph Representation
+
+Adjacency Matrix
+
+Adjacency List
+
+Incidence Matrix
+
+
+2. Graph Traversal Algorithms
+
+Depth-First Search (DFS)
+
+Breadth-First Search (BFS)
+
+
+3. Shortest Path Algorithms
+
+Dijkstra’s Algorithm (Single-source shortest path for non-negative weights)
+
+Bellman-Ford Algorithm (Handles negative weights)
+
+Floyd-Warshall Algorithm (All-pairs shortest path)
+
+Johnson’s Algorithm (All-pairs shortest path with negative weights)
+
+A* Algorithm (Pathfinding in weighted graphs)
+
+
+4. Minimum Spanning Tree (MST) Algorithms
+
+Prim’s Algorithm
+
+Kruskal’s Algorithm
+
+Borůvka’s Algorithm
+
+
+5. Cycle Detection Algorithms
+
+Cycle detection using DFS (Directed & Undirected Graphs)
+
+Union-Find Algorithm (Disjoint Set Union)
+
+Floyd’s Tortoise and Hare Algorithm (for cycle detection in linked lists)
+
+
+6. Topological Sorting Algorithms (For Directed Acyclic Graphs - DAG)
+
+Kahn’s Algorithm (BFS-based)
+
+DFS-based Topological Sorting
+
+
+7. Network Flow Algorithms
+
+Ford-Fulkerson Algorithm
+
+Edmonds-Karp Algorithm (BFS-based Ford-Fulkerson)
+
+Dinic’s Algorithm (Faster max flow)
+
+Push-Relabel Algorithm
+
+
+8. Strongly Connected Components (SCC) Algorithms
+
+Kosaraju’s Algorithm
+
+Tarjan’s Algorithm
+
+
+9. Eulerian and Hamiltonian Paths
+
+Fleury’s Algorithm (Eulerian Path/Circuit)
+
+Hierholzer’s Algorithm (Euler Circuit)
+
+Backtracking for Hamiltonian Path/Circuit
+
+
+10. Bipartite Graph Checking
+
+BFS/DFS-based Bipartiteness Test
+
+Kuhn’s Algorithm (Maximum Bipartite Matching)
+
+Hopcroft-Karp Algorithm (Bipartite Matching in O(√V E))
+
+
+11. Graph Coloring Algorithms
+
+Greedy Coloring Algorithm
+
+Welsh-Powell Algorithm
+
+Backtracking-based Graph Coloring
+
+DSATUR Algorithm
+
+
+12. Planarity Testing and Graph Drawing
+
+Kuratowski’s Theorem
+
+Boyer-Myrvold Planarity Test
+
+
+13. LCA (Lowest Common Ancestor) Algorithms
+
+Binary Lifting Method
+
+Tarjan’s Off-line LCA Algorithm
+
+
+14. Tree Algorithms
+
+Rooting a Tree
+
+Diameter of a Tree (Using BFS/DFS)
+
+Centroid Decomposition
+
+Heavy-Light Decomposition (HLD)
+
+
+15. Other Important Graph Algorithms
+
+Articulation Points and Bridges (Tarjan’s Algorithm)
+
+2-SAT Problem (Solving using Strongly Connected Components)
+
+Chinese Postman Problem (Route Optimization)
+
+Traveling Salesman Problem (TSP) (Dynamic Programming, Approximation)
+
+Graph Isomorphism (VF2 Algorithm)
+
+*/
 
